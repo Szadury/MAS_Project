@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> Title </th>
+        <th> Author </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${bars.empty}">
+        <td colspan="2"> No Bars Available </td>
+    </tr>
+    <tr th:each="bar : ${bars}">
+        <td><span th:text="${bar.name}"> Name </span></td>
+        <td><span th:text="${bar.address}"> Address </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
