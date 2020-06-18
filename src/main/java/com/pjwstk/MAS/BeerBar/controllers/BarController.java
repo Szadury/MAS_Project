@@ -6,6 +6,7 @@ import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +21,12 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/bar")
 public class BarController {
-    private final BarRepository barRepository;
-    private final BarTableRepository barTableRepository;
-
+    @Autowired
+    BarRepository barRepository;
+    @Autowired
+    BarTableRepository barTableRepository;
     Logger logger = LoggerFactory.getLogger("IndexController");
 
-    public BarController(BarRepository barRepository, BarTableRepository barTableRepository) {
-        this.barRepository = barRepository;
-        this.barTableRepository = barTableRepository;
-    }
     @GetMapping("/bars")
     public String getBeers(Model model, HttpSession session) {
         List<Bar> barList = barRepository.findAll();
@@ -53,6 +51,7 @@ public class BarController {
         logger.info(String.valueOf(barTableIterator.hasNext()));
         model.addAttribute("now", LocalDate.now());
         model.addAttribute("hasSeats", barTableIterator.hasNext());
+        model.addAttribute("barId", barId);
         return "reservationDate";
     }
 

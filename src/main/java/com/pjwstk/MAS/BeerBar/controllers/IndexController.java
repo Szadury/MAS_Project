@@ -17,6 +17,7 @@ public class IndexController {
 
     @Autowired
     UserRepository userRepository;
+
     Logger logger = LoggerFactory.getLogger("IndexController");
 
     @GetMapping("/login")

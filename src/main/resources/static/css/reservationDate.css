@@ -1,0 +1,30 @@
+body {
+    text-align: center;
+}
+
+form{
+    margin-top: 20%;
+}
+
+p {
+    font-family: verdana;
+    font-size: 20px;
+}
+
+input[type=date]{
+    border: 1px solid #ffa500;
+    width: 15%;
+}
+input[type=text]{
+    display: none;
+}
+
+input[type=submit] {
+    background-color: #ffa500;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 15%;
+}
