@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 @Controller
 public class IndexController {
+
     @Autowired
     UserRepository userRepository;
     Logger logger = LoggerFactory.getLogger("IndexController");
@@ -40,6 +41,6 @@ public class IndexController {
     @RequestMapping(value = "logout", method = RequestMethod.GET)
     public String logout(HttpSession session) {
         session.removeAttribute("username");
-        return "redirect:../account";
+        return "redirect:login";
     }
 }

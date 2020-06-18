@@ -5,20 +5,17 @@
     <title>Title</title>
 </head>
 <body>
+<link href="/css/barList.css" rel="stylesheet">
+<p>Lista barów</p>
 <table>
     <thead>
-    <tr>
-        <th> Title </th>
-        <th> Author </th>
-    </tr>
     </thead>
-    <tbody>
+    <tbody class="table_body">
     <tr th:if="${bars.empty}">
         <td colspan="2"> No Bars Available </td>
     </tr>
     <tr th:each="bar : ${bars}">
-        <td><span th:text="${bar.name}"> Name </span></td>
-        <td><span th:text="${bar.address}"> Address </span></td>
+        <td><a th:href="@{'/bar?id=' + ${bar.id}}"><span th:text="${bar.name}"> Name </span></a></td>
     </tr>
     </tbody>
 </table>

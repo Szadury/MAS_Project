@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<link href="/css/barPage.css" rel="stylesheet">
+        <div class="grid-container">
+            <div class="name-container">
+                <p>Nazwa Baru</p>
+                <span th:text="${bar.name}"> Name </span>
+            </div>
+            <div class="address-container">
+                <p>Adres</p>
+                <span th:text="${bar.address}"> Name </span>
+            </div>
+            <div class="phone-container">
+                <p>Numer Telefonu</p>
+                <span th:text="${bar.contactNumber}"> Name </span>
+            </div>
+            <div class="description-container">
+            <p>Opis</p>
+                <span th:text="${bar.description}"> Name </span>
+            </div>
+            <a th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
+        </div>
+       <!-- <form action="/" id="addComment">
+            <label>
+                <textarea class="text-area" name="comment" form="addComment">Dodaj komentarz...</textarea>
+            </label>
+            <br>
+            <input type="submit">
+        </form> -->
+
+</body>
+</html>

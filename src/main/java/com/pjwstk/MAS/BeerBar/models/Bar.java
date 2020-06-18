@@ -28,6 +28,12 @@ public class Bar {
     @Column(name = "Description")
     private String description;
 
+    @Column(name = "startHour")
+    private int startHour;
+
+    @Column(name = "endHour")
+    private int endHour;
+
     public Bar() {
     }
 
@@ -100,5 +106,18 @@ public class Bar {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Bar{" +
+                "id=" + id +
+                ", companyOwnerId=" + companyOwnerId +
+                ", personOwnerId=" + personOwnerId +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", contactNumber='" + contactNumber + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

@@ -3,7 +3,6 @@ package com.pjwstk.MAS.BeerBar.controllers;
 import com.pjwstk.MAS.BeerBar.ResourceNotFoundException;
 import com.pjwstk.MAS.BeerBar.models.Beer;
 import com.pjwstk.MAS.BeerBar.repositories.BeerRepository;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
