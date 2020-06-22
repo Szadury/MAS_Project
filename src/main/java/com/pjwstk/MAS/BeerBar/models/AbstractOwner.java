@@ -7,9 +7,9 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class AbstractOwner implements Owner{
     @Id
-    private long id;
-    private String email;
-    private String phoneNumber;
+    long id;
+    String email;
+    String phoneNumber;
 
     @Override
     public String getEmail() {

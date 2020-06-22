@@ -23,4 +23,36 @@ public class BarTable {
         this.numberOfSeats = numberOfSeats;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getBarId() {
+        return barId;
+    }
+
+    public void setBarId(Integer barId) {
+        this.barId = barId;
+    }
+
+    public Integer getNumberOfSeats() {
+        return numberOfSeats;
+    }
+
+    public void setNumberOfSeats(Integer numberOfSeats) {
+        this.numberOfSeats = numberOfSeats;
+    }
+
+    @Override
+    public String toString() {
+        return "BarTable{" +
+                "id=" + id +
+                ", barId=" + barId +
+                ", numberOfSeats=" + numberOfSeats +
+                '}';
+    }
 }

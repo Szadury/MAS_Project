@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>Dostępne godziny</p>
+<table>
+    <tbody class="table_body">
+    <tr th:if="${availableReservations.empty}">
+        <td colspan="2"> Brak dostępnych rezerwacji! </td>
+    </tr>
+    <tr th:each="reservation : ${availableReservations}">
+        <td><a href="reservationDate.html"><span th:text="${'Stolik dla ' + reservation.barTable.numberOfSeats + ' osób  |   ' + #temporals.format(reservation.startTime, 'HH:mm') + ' - ' + #temporals.format(reservation.endTime, 'HH:mm')}"> Name </span></a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

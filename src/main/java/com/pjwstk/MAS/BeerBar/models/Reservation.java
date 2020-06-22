@@ -2,7 +2,6 @@ package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "Reservation")
@@ -15,11 +14,13 @@ public class Reservation {
     @Column(name = "PremiumUser_Id", nullable = false)
     private int userId;
 
-    @Column(name = "Bar_Id", nullable = false)
-    private int barId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "Bar_Id", nullable = false)
+    private Bar bar;
 
-    @Column(name = "BarTable_Id", nullable = false)
-    private String barTableId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "BarTable_Id", nullable = false)
+    private BarTable barTable;
 
     @Column(name = "StartTime", nullable = false)
     private LocalDateTime startTime;
@@ -30,6 +31,7 @@ public class Reservation {
     @Column(name="Status", length = 20, nullable = false)
     private String Status;
 
+    public static int reservationTime = 2;
     public int getId() {
         return id;
     }
@@ -46,20 +48,20 @@ public class Reservation {
         this.userId = userId;
     }
 
-    public int getBarId() {
-        return barId;
+    public Bar getBar() {
+        return bar;
     }
 
-    public void setBarId(int barId) {
-        this.barId = barId;
+    public void setBar(Bar bar) {
+        this.bar = bar;
     }
 
-    public String getBarTableId() {
-        return barTableId;
+    public BarTable getBarTable() {
+        return barTable;
     }
 
-    public void setBarTableId(String barTableId) {
-        this.barTableId = barTableId;
+    public void setBarTable(BarTable barTable) {
+        this.barTable = barTable;
     }
 
     public LocalDateTime getStartTime() {
@@ -86,13 +88,21 @@ public class Reservation {
         Status = status;
     }
 
+    public static int getReservationTime() {
+        return reservationTime;
+    }
+
+    public static void setReservationTime(int reservationTime) {
+        Reservation.reservationTime = reservationTime;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", barId=" + barId +
-                ", barTableId='" + barTableId + '\'' +
+                ", bar=" + bar +
+                ", barTable=" + barTable +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", Status='" + Status + '\'' +
