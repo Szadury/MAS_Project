@@ -9,6 +9,7 @@ import com.pjwstk.MAS.BeerBar.repositories.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,8 @@ import java.util.List;
 @RequestMapping(value = "/reservation")
 public class ReservationController {
 
+    Logger logger = LoggerFactory.getLogger(ReservationController.class);
+
     @Autowired
     ReservationRepository reservationRepository;
 
@@ -33,8 +36,6 @@ public class ReservationController {
 
     @Autowired
     BarTableRepository barTableRepositoryRepository;
-
-    Logger logger = LoggerFactory.getLogger("ReservationController");
 
     @PostMapping("/findSeats")
     public String findSeats(@RequestParam(name = "reservation-date") String date, @RequestParam(name = "barId") int barId, Model model) {
@@ -50,18 +51,17 @@ public class ReservationController {
         for (BarTable bt : barTables) {
             int startTime = bar.getStartHour();
             int barEndTime = bar.getEndHour();
-            while(startTime <= barEndTime - Reservation.reservationTime + 1){
+            while (startTime <= barEndTime - Reservation.reservationTime + 1) {
                 LocalDateTime givenHourTime = getHourTime(year, month, day, startTime);
-                if(reservationForGivenHourExists(bt, currentReservations, givenHourTime)){
+                if (reservationForGivenHourExists(bt, currentReservations, givenHourTime)) {
                     startTime += 1;
-                }
-                else{
+                } else {
                     Reservation reservation = new Reservation();
                     reservation.setBar(bar);
                     reservation.setBarTable(bt);
                     reservation.setStartTime(givenHourTime);
                     reservation.setEndTime(givenHourTime.plusHours(Reservation.reservationTime));
-                    startTime += Reservation.reservationTime;
+                    startTime += 1;
                     availableReservations.add(reservation);
                 }
             }
@@ -71,12 +71,21 @@ public class ReservationController {
         return "availableReservations";
     }
 
+    @PostMapping("/createReservation")
+    public String createReservation(@RequestParam(name = "startTime") String startTimeString, @RequestParam(name = "endTime") String endTimeString,
+                                    @RequestParam(name = "barId") int barId, @RequestParam(name = "tableId") int tableId, Model model, HttpStatus httpStatus) {
+        LocalDateTime startTime = LocalDateTime.parse(startTimeString);
+        LocalDateTime endTime = LocalDateTime.parse(endTimeString);
+        logger.info(String.valueOf(startTime));
+        logger.info(String.valueOf(endTime));
+        logger.info(String.valueOf(barId));
+        return "login";
+    }
     private boolean reservationForGivenHourExists(BarTable bt, List<Reservation> currentReservations, LocalDateTime givenHourTime) {
-        for(Reservation reservation: currentReservations){
-            //Jeżeli dla tego stolika jest rezerwacja w godzinie
-            if(reservation.getBarTable() == bt){
-                if(givenHourTime.toLocalTime().getHour() >= reservation.getStartTime().toLocalTime().getHour() &&
-                        givenHourTime.toLocalTime().getHour() < reservation.getEndTime().toLocalTime().getHour()){
+        for (Reservation reservation : currentReservations) {
+            if (reservation.getBarTable() == bt) {
+                if (givenHourTime.toLocalTime().getHour() >= reservation.getStartTime().toLocalTime().getHour() &&
+                        givenHourTime.toLocalTime().getHour() < reservation.getEndTime().toLocalTime().getHour()) {
                     return true;
                 }
             }

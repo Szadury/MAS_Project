@@ -1,0 +1,48 @@
+html, body {
+    text-align: center;
+    width: 100%;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+}
+
+p {
+    font-family: verdana, serif;
+    font-size: 20px;
+}
+
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 28%;
+}
+
+tr {
+    padding-right: 200px;
+    font-size: large;
+    border: 1px solid #ffa500;
+}
+
+tr:hover {
+    border: 2px solid #ffa400;
+}
+
+input[type=datetime-local] {
+    display: none;
+}
+
+input[type=text] {
+    display: none;
+}
+
+input[type=submit] {
+    background-color: #ffa500;
+    color: white;
+    padding: 14px 20px;
+    margin-left: 50px;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+}

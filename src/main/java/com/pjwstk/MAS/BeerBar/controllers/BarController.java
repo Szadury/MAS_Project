@@ -4,8 +4,6 @@ import com.pjwstk.MAS.BeerBar.models.Bar;
 import com.pjwstk.MAS.BeerBar.models.BarTable;
 import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,36 +21,49 @@ import java.util.List;
 public class BarController {
     @Autowired
     BarRepository barRepository;
+
     @Autowired
     BarTableRepository barTableRepository;
-    Logger logger = LoggerFactory.getLogger("IndexController");
 
     @GetMapping("/bars")
     public String getBeers(Model model, HttpSession session) {
         List<Bar> barList = barRepository.findAll();
-        model.addAttribute("bars", barList);
-        return "barList";
+        if(session.getAttribute("id") == null){
+            model.addAttribute("loginFirst", "not logged in");
+            return "login";
+        }
+        else{
+            model.addAttribute("bars", barList);
+            return "barList";
+        }
     }
 
     @GetMapping("")
     public String getBeerPage(@RequestParam int id, Model model, HttpSession session) {
-        Bar bar = barRepository.getBarById(id);
-        logger.info("Id: " + id);
-        logger.info(bar.toString());
-        model.addAttribute("bar", bar);
-        return "barPage";
+        if(session.getAttribute("id") == null){
+            model.addAttribute("loginFirst", "not logged in");
+            return "login";
+        }
+        else {
+            Bar bar = barRepository.getBarById(id);
+            model.addAttribute("bar", bar);
+            return "barPage";
+        }
     }
 
     @GetMapping("hasSeats")
     public String getReservationDatePage(@RequestParam int barId, Model model, HttpSession session) {
-        Iterator<BarTable> barTableIterator = barTableRepository.getBarTablesByBarID(barId).iterator();
-        logger.info("Id: " + barId);
-
-        logger.info(String.valueOf(barTableIterator.hasNext()));
-        model.addAttribute("now", LocalDate.now());
-        model.addAttribute("hasSeats", barTableIterator.hasNext());
-        model.addAttribute("barId", barId);
-        return "reservationDate";
+        if(session.getAttribute("id") == null){
+            model.addAttribute("loginFirst", "not logged in");
+            return "login";
+        }
+        else {
+            Iterator<BarTable> barTableIterator = barTableRepository.getBarTablesByBarID(barId).iterator();
+            model.addAttribute("now", LocalDate.now());
+            model.addAttribute("hasSeats", barTableIterator.hasNext());
+            model.addAttribute("barId", barId);
+            //Jeżeli użytkownik zawiera w sb użytkownika premium
+            return "reservationDate";
+        }
     }
-
 }

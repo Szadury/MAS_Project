@@ -7,6 +7,7 @@
 <body>
 <link href="/css/login.css" rel="stylesheet">
 <p th:if="${loginError}" class="error">Nie znaleziono takiego użytkownika</p>
+<p th:if="${loginFirst}" class="error">Zaloguj się, aby korzystać z serwisu</p>
 <div class="container">
     <form th:action="@{/login}" method="post">
 

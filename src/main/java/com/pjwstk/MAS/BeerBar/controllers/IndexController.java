@@ -15,25 +15,26 @@ import java.util.Iterator;
 @Controller
 public class IndexController {
 
+    Logger logger = LoggerFactory.getLogger(IndexController.class);
+
     @Autowired
     UserRepository userRepository;
 
-    Logger logger = LoggerFactory.getLogger("IndexController");
-
     @GetMapping("/login")
-    public String get(){
+    public String get() {
         return "login";
     }
 
     @PostMapping("/login")
-    public String authLogin(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model){
+    public String authLogin(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model) {
         Iterator<UserModel> userIterable = userRepository.findUserWithPassword(username, password).iterator();
-        if(userIterable.hasNext()) {
+        if (userIterable.hasNext()) {
             UserModel userModel = userIterable.next();
+            logger.info(userModel.toString());
             session.setAttribute("username", username);
             session.setAttribute("id", userModel.getId());
             return "redirect:bar/bars";
-        } else{
+        } else {
             model.addAttribute("loginError", "User not found");
             return "login";
         }
@@ -42,6 +43,7 @@ public class IndexController {
     @RequestMapping(value = "logout", method = RequestMethod.GET)
     public String logout(HttpSession session) {
         session.removeAttribute("username");
+        session.removeAttribute("id");
         return "redirect:login";
     }
 }

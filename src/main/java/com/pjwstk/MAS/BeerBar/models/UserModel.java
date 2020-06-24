@@ -4,28 +4,23 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "UserModel")
-public class UserModel {
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "Id")
-    private int id;
-
+public class UserModel extends Person{
     @Column(name = "Nickname", nullable = false)
-    private String username;
+    protected String username;
 
     @Column(name = "Email", nullable = false)
-    private String email;
+    protected String email;
 
     @Column(name = "Password", nullable = false)
-    private String password;
+    protected String password;
 
-    public int getId() {
-        return id;
-    }
+    @OneToOne(mappedBy = "userModel")
+    private NormalUser normalUser;
 
-    public void setId(int id) {
-        this.id = id;
+    @OneToOne(mappedBy = "userModel")
+    private PremiumUser premiumUser;
+
+    public UserModel() {
     }
 
     public String getUsername() {
@@ -55,10 +50,13 @@ public class UserModel {
     @Override
     public String toString() {
         return "UserModel{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", normalUser=" + normalUser + '\'' +
+                ", premiumUser=" + premiumUser +
                 '}';
     }
 }

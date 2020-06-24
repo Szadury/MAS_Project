@@ -17,9 +17,6 @@ public class OwnerCompany extends AbstractOwner implements Owner{
     @Column(name = "Name", length = 40, nullable = false)
     private String name;
 
-    @Column(name = "Email", length = 40, nullable = false)
-    private String email;
-
     @Column(name = "PhoneNumber", length = 14, nullable = false)
     private String phoneNumber;
 
@@ -33,14 +30,8 @@ public class OwnerCompany extends AbstractOwner implements Owner{
     {
         this.regonNumber = regonNumber;
         this.name = name;
-        this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
     }
 
     @Override

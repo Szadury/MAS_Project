@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <body>
+<link href="/css/availableReservations.css" rel="stylesheet">
 <p>Dostępne godziny</p>
 <table>
     <tbody class="table_body">
@@ -12,7 +13,16 @@
         <td colspan="2"> Brak dostępnych rezerwacji! </td>
     </tr>
     <tr th:each="reservation : ${availableReservations}">
-        <td><a href="reservationDate.html"><span th:text="${'Stolik dla ' + reservation.barTable.numberOfSeats + ' osób  |   ' + #temporals.format(reservation.startTime, 'HH:mm') + ' - ' + #temporals.format(reservation.endTime, 'HH:mm')}"> Name </span></a></td>
+        <form th:action="@{/reservation/createReservation}" method="post">
+            <td><span th:text="${'Stolik no.' + reservation.barTable.id + ' dla ' + reservation.barTable.numberOfSeats + ' osób  |   ' + #temporals.format(reservation.startTime, 'HH:mm') + ' - ' + #temporals.format(reservation.endTime, 'HH:mm')}"> Name </span>
+                <input type="text" name="tableId" th:value="${reservation.barTable.id}"/>
+                <input type="text" name="startTime" th:value="${reservation.startTime}"/>
+                <input type="text" name="endTime" th:value="${reservation.endTime}"/>
+                <input type="text" name="barId" th:value="${barId}"/>
+                <input type="submit" value="Rezerwuj">
+            </td>
+        </form>
+
     </tr>
     </tbody>
 </table>

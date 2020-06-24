@@ -1,5 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -22,9 +24,11 @@ public class Reservation {
     @JoinColumn(name = "BarTable_Id", nullable = false)
     private BarTable barTable;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
     @Column(name = "StartTime", nullable = false)
     private LocalDateTime startTime;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
     @Column(name="EndTime", length = 30, nullable = false)
     private LocalDateTime endTime;
 
