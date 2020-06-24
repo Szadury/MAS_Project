@@ -9,4 +9,7 @@ public interface BarTableRepository extends JpaRepository<BarTable, Long> {
     @Query("SELECT bt FROM BarTable bt WHERE bt.barId = :barId")
     Iterable<BarTable> getBarTablesByBarID(@Param("barId") int barId);
 
+    @Query("Select bt FROM BarTable bt where bt.id = :tableId")
+    BarTable getById(@Param("tableId") int tableId);
+
 }

@@ -10,17 +10,17 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "id")
     private int id;
 
     @Column(name = "PremiumUser_Id", nullable = false)
     private int userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Bar_Id", nullable = false)
     private Bar bar;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BarTable_Id", nullable = false)
     private BarTable barTable;
 
@@ -37,6 +37,7 @@ public class Reservation {
     private StatusType Status;
 
     public static int reservationTime = 2;
+
     public int getId() {
         return id;
     }
@@ -106,11 +107,10 @@ public class Reservation {
         return "Reservation{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", bar=" + bar +
                 ", barTable=" + barTable +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", Status='" + Status + '\'' +
+                ", Status=" + Status +
                 '}';
     }
 

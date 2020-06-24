@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Wybierz date rezerwacji</title>
 </head>
+
 <body>
-<a href="/logout"> <button class="logout">Wyloguj</button></a>
+<link href="/css/generalStyle.css" rel="stylesheet">
 <link href="/css/reservationDate.css" rel="stylesheet">
-    <form th:action="@{/reservation/findSeats}" method="post">
+<a href="/logout"> <button class="logout">Wyloguj</button></a>
+<a th:href="@{'/bar?id=' + ${bar.id}}"><button class="goBack">Wróć</button></a>
+<form th:action="@{/reservation/findSeats}" method="post">
         <p>Wpisz datę rezerwacji</p>
+        <p th:if="${noReservations}">Brak dostępnych rezerwacji dla podanego dnia.</p>
         <input type="text" name="barId" th:value="${barId}">
         <input type="date" name="reservation-date" th:value="${now}" th:min="${now}" autofocus="autofocus"><br>
         <input type="submit" value="Szukaj"/>

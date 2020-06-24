@@ -20,17 +20,17 @@ public class IndexController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/login")
-    public String get() {
+    @GetMapping("/")
+    public String getLoginPage() {
         return "login";
     }
 
     @PostMapping("/login")
     public String authLogin(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model) {
         Iterator<UserModel> userIterable = userRepository.findUserWithPassword(username, password).iterator();
+
         if (userIterable.hasNext()) {
             UserModel userModel = userIterable.next();
-            logger.info(userModel.toString());
             session.setAttribute("username", username);
             session.setAttribute("id", userModel.getId());
             return "redirect:bar/bars";

@@ -1,14 +1,5 @@
-body {
-    text-align: center;
-}
-
 form{
     margin-top: 20%;
-}
-
-p {
-    font-family: verdana;
-    font-size: 20px;
 }
 
 input[type=date]{
@@ -27,17 +18,4 @@ input[type=submit] {
     border: none;
     cursor: pointer;
     width: 15%;
-}
-
-.logout{
-    position:fixed;
-    right:10px;
-    top:5px;
-    background-color: #ffa500;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 5%;
 }

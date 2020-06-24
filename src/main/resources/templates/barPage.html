@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
+<head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Strona Baru</title>
 </head>
+
 <body>
+<link href="/css/generalStyle.css" rel="stylesheet">
 <link href="/css/barPage.css" rel="stylesheet">
         <a href="/logout"> <button class="logout">Wyloguj</button></a>
         <div class="grid-container">
@@ -24,7 +26,8 @@
             <p>Opis</p>
                 <span th:text="${bar.description}"> Name </span>
             </div>
-            <a th:if="${isPremium}" th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
+            <p th:if="${noSeats}">Nie ma siedzeń w tym barze</p>
+            <a th:if="${isPremium && noSeats == null}" th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
         </div>
 </body>
 </html>

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Logowanie</title>
 </head>
+
 <body>
+<link href="/css/generalStyle.css" rel="stylesheet">
 <link href="/css/login.css" rel="stylesheet">
 <p th:if="${loginError}" class="error">Nie znaleziono takiego użytkownika</p>
 <p th:if="${loginFirst}" class="error">Zaloguj się, aby korzystać z serwisu</p>

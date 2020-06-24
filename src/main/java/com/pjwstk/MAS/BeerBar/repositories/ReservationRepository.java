@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query(value = "SELECT r FROM Reservation r WHERE r.bar_Id = :barId AND EXTRACT(YEAR FROM r.startTime) = :year AND EXTRACT(MONTH FROM r.startTime) = :month AND EXTRACT(DAY FROM r.startTime) = :day", nativeQuery = true)
+    @Query(value = "SELECT * FROM Reservation r where r.bar_id = :barId AND EXTRACT(YEAR FROM r.startTime) = :year AND EXTRACT(MONTH FROM r.startTime) = :month AND EXTRACT(DAY FROM r.startTime) = :day", nativeQuery = true)
     Iterable<Reservation> getReservationsForDateAndBar(@Param("barId") int barId, @Param("year") int year, @Param("month") int month, @Param("day") int day);
 }

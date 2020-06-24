@@ -33,9 +33,4 @@ public class OwnerCompany extends AbstractOwner implements Owner{
         this.phoneNumber = phoneNumber;
         this.password = password;
     }
-
-    @Override
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
 }
