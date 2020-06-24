@@ -32,8 +32,9 @@ public class Reservation {
     @Column(name="EndTime", length = 30, nullable = false)
     private LocalDateTime endTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="Status", length = 20, nullable = false)
-    private String Status;
+    private StatusType Status;
 
     public static int reservationTime = 2;
     public int getId() {
@@ -84,11 +85,11 @@ public class Reservation {
         this.endTime = endTime;
     }
 
-    public String getStatus() {
+    public StatusType getStatus() {
         return Status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusType status) {
         Status = status;
     }
 
@@ -111,5 +112,13 @@ public class Reservation {
                 ", endTime=" + endTime +
                 ", Status='" + Status + '\'' +
                 '}';
+    }
+
+    public enum StatusType{
+        Pending,
+        Accepted,
+        Rejected,
+        Canceled,
+        Finished
     }
 }

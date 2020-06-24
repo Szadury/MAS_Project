@@ -4,6 +4,7 @@ import com.pjwstk.MAS.BeerBar.models.Bar;
 import com.pjwstk.MAS.BeerBar.models.BarTable;
 import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
+import com.pjwstk.MAS.BeerBar.repositories.PremiumUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,9 @@ public class BarController {
 
     @Autowired
     BarTableRepository barTableRepository;
+
+    @Autowired
+    PremiumUserRepository premiumUserRepository;
 
     @GetMapping("/bars")
     public String getBeers(Model model, HttpSession session) {
@@ -46,6 +50,12 @@ public class BarController {
         }
         else {
             Bar bar = barRepository.getBarById(id);
+            //TODO: Check user type
+            int userModelId = (int) session.getAttribute("id");
+            int premiumUserId = findPremiumUserByUserModel(userModelId);
+            if(premiumUserId != -1){
+                model.addAttribute("isPremium", "true");
+            }
             model.addAttribute("bar", bar);
             return "barPage";
         }
@@ -65,5 +75,10 @@ public class BarController {
             //Jeżeli użytkownik zawiera w sb użytkownika premium
             return "reservationDate";
         }
+    }
+
+    private int findPremiumUserByUserModel(int userModelId) {
+        Integer id = premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
+        return id != null ? id : -1;
     }
 }

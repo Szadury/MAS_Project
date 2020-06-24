@@ -6,6 +6,7 @@
 </head>
 <body>
 <link href="/css/barPage.css" rel="stylesheet">
+        <a href="/logout"> <button class="logout">Wyloguj</button></a>
         <div class="grid-container">
             <div class="name-container">
                 <p>Nazwa Baru</p>
@@ -23,15 +24,7 @@
             <p>Opis</p>
                 <span th:text="${bar.description}"> Name </span>
             </div>
-            <a th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
+            <a th:if="${isPremium}" th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
         </div>
-       <!-- <form action="/" id="addComment">
-            <label>
-                <textarea class="text-area" name="comment" form="addComment">Dodaj komentarz...</textarea>
-            </label>
-            <br>
-            <input type="submit">
-        </form> -->
-
 </body>
 </html>

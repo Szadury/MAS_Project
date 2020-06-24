@@ -38,23 +38,23 @@
 .address-container{
     margin-bottom: 30px;
 }
+
 .address-container p{
     font-size: 15px;
 }
 .address-container span{
     border-bottom: 1px solid #ffa500;
 }
-
 .phone-container{
     margin-bottom: 30px;
 }
+
 .phone-container p{
     font-size: 15px;
 }
 .phone-container span{
     border-bottom: 1px solid #ffa500;
 }
-
 button {
     width: 40%;
     padding: 12px 20px;
@@ -63,6 +63,19 @@ button {
     display: inline-block;
     border-radius: 8px;
     box-sizing: border-box;
+}
+
+.logout{
+    position:fixed;
+    right:10px;
+    top:5px;
+    background-color: #ffa500;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 5%;
 }
 
 input[type=submit] {
