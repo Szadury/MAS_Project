@@ -28,7 +28,7 @@ p {
 
 .goBack{
     position:fixed;
-    right:10px;
+    right:90%;
     top:5px;
     background-color: #ffa500;
     color: white;

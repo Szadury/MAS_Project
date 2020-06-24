@@ -44,6 +44,6 @@ public class IndexController {
     public String logout(HttpSession session) {
         session.removeAttribute("username");
         session.removeAttribute("id");
-        return "redirect:login";
+        return "redirect:";
     }
 }

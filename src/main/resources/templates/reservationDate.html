@@ -9,7 +9,7 @@
 <link href="/css/generalStyle.css" rel="stylesheet">
 <link href="/css/reservationDate.css" rel="stylesheet">
 <a href="/logout"> <button class="logout">Wyloguj</button></a>
-<a th:href="@{'/bar?id=' + ${bar.id}}"><button class="goBack">Wróć</button></a>
+<a th:href="@{'/bar?id=' + ${barId}}"><button class="goBack">Wróć</button></a>
 <form th:action="@{/reservation/findSeats}" method="post">
         <p>Wpisz datę rezerwacji</p>
         <p th:if="${noReservations}">Brak dostępnych rezerwacji dla podanego dnia.</p>

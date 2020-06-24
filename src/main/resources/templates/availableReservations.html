@@ -9,7 +9,7 @@
 <link href="/css/generalStyle.css" rel="stylesheet">
 <link href="/css/availableReservations.css" rel="stylesheet">
 <a href="/logout"> <button class="logout">Wyloguj</button></a>
-<a href="/logout"> <button class="goBack">Wróć</button></a>
+<a th:href="@{'/bar/hasSeats?barId=' + ${barId}}"> <button class="goBack">Wróć</button></a>
 <p>Dostępne godziny</p>
 <table>
     <tbody class="table_body">

@@ -9,6 +9,7 @@
 <link href="/css/generalStyle.css" rel="stylesheet">
 <link href="/css/barPage.css" rel="stylesheet">
         <a href="/logout"> <button class="logout">Wyloguj</button></a>
+        <a href="/bar/bars"><button class="goBack">Wróć</button></a>
         <div class="grid-container">
             <div class="name-container">
                 <p>Nazwa Baru</p>
@@ -27,7 +28,7 @@
                 <span th:text="${bar.description}"> Name </span>
             </div>
             <p th:if="${noSeats}">Nie ma siedzeń w tym barze</p>
-            <a th:if="${isPremium && noSeats == null}" th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
+            <a th:if="${isPremium != null && noSeats == null}" th:href="@{'/bar/hasSeats?barId=' + ${bar.id}}"><button type="button">Rezerwuj</button></a>
         </div>
 </body>
 </html>
