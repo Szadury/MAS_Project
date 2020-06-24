@@ -28,10 +28,10 @@ public class Bar {
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "startHour")
+    @Column(name = "startHour", nullable = false)
     private int startHour;
 
-    @Column(name = "endHour")
+    @Column(name = "endHour", nullable = false)
     private int endHour;
 
     public Bar() {
