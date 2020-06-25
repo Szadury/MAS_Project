@@ -15,8 +15,6 @@ import java.util.Iterator;
 @Controller
 public class IndexController {
 
-    Logger logger = LoggerFactory.getLogger(IndexController.class);
-
     @Autowired
     UserRepository userRepository;
 
