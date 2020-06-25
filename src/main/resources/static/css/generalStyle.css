@@ -23,7 +23,7 @@ p {
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 5%;
+    width: 100px;
 }
 
 .goBack{
@@ -36,5 +36,5 @@ p {
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 5%;
+    width: 80px;
 }
