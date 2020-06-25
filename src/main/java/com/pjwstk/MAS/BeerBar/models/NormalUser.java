@@ -17,6 +17,25 @@ public class NormalUser {
     @Column(name = "PhoneNumber", length = 40)
     private String phoneNumber;
 
+    public int getId() {
+        return id;
+    }
+
+    public UserModel getUserModel() {
+        return userModel;
+    }
+
+    public void setUserModel(UserModel userModel) {
+        this.userModel = userModel;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public NormalUser(int id, UserModel userModel, String phoneNumber) {
         this.id = id;

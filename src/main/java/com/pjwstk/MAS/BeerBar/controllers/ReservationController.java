@@ -44,7 +44,6 @@ public class ReservationController {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
         } else {
-            List<Reservation> availableReservations = new ArrayList<>();
             int year = Integer.parseInt(date.substring(0, 4));
             int month = Integer.parseInt(date.substring(5, 7));
             int day = Integer.parseInt(date.substring(8, 10));
@@ -57,24 +56,7 @@ public class ReservationController {
             List<Reservation> currentReservations = new ArrayList<>();
             reservationIterable.forEach(currentReservations::add);
 
-            for (BarTable bt : barTables) {
-                int currentReservationStartHour = bar.getStartHour();
-                int barEndTime = bar.getEndHour();
-                while (currentReservationStartHour <= barEndTime - Reservation.reservationTime) {
-                    LocalDateTime givenHourTime = getHourTime(year, month, day, currentReservationStartHour);
-                    LocalDateTime endHourTime = givenHourTime.plusHours(Reservation.reservationTime);
-                    if (!reservationForGivenHourExists(bt, currentReservations, givenHourTime, endHourTime)) {
-                        Reservation reservation = new Reservation();
-                        reservation.setBar(bar);
-                        reservation.setBarTable(bt);
-                        reservation.setStartTime(givenHourTime);
-                        reservation.setEndTime(givenHourTime.plusHours(Reservation.reservationTime));
-
-                        availableReservations.add(reservation);
-                    }
-                    currentReservationStartHour += 1;
-                }
-            }
+            List<Reservation> availableReservations = findAvailableReservation(barTables, bar, currentReservations, year, month, day);//new ArrayList<>();
             if (!availableReservations.isEmpty()) {
                 model.addAttribute("availableReservations", availableReservations);
                 model.addAttribute("barId", barId);
@@ -118,6 +100,29 @@ public class ReservationController {
                 return "redirect:reservation/findSeats";
             }
         }
+    }
+
+    private List<Reservation> findAvailableReservation(Iterable<BarTable> barTables, Bar bar, List<Reservation> currentReservations, int year, int month, int day) {
+        List<Reservation> availableReservations = new ArrayList<>();
+        for (BarTable bt : barTables) {
+            int currentReservationStartHour = bar.getStartHour();
+            int barEndTime = bar.getEndHour();
+            while (currentReservationStartHour <= barEndTime - Reservation.reservationTime) {
+                LocalDateTime givenHourTime = getHourTime(year, month, day, currentReservationStartHour);
+                LocalDateTime endHourTime = givenHourTime.plusHours(Reservation.reservationTime);
+                if (!reservationForGivenHourExists(bt, currentReservations, givenHourTime, endHourTime)) {
+                    Reservation reservation = new Reservation();
+                    reservation.setBar(bar);
+                    reservation.setBarTable(bt);
+                    reservation.setStartTime(givenHourTime);
+                    reservation.setEndTime(givenHourTime.plusHours(Reservation.reservationTime));
+
+                    availableReservations.add(reservation);
+                }
+                currentReservationStartHour += 1;
+            }
+        }
+        return availableReservations;
     }
 
     private int findPremiumUserByUserModel(int userModelId) {

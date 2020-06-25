@@ -27,10 +27,6 @@ public class BarTable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Integer getBarId() {
         return barId;
     }

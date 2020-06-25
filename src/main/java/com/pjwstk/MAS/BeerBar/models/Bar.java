@@ -56,10 +56,6 @@ public class Bar {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Integer getCompanyOwnerId() {
         return companyOwnerId;
     }
