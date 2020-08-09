@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "PremiumUser")
@@ -10,12 +11,16 @@ public class PremiumUser {
     @Column(name = "Id")
     private int id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "User_Id")
+    @OneToOne
+    @JoinColumn(name = "User_Id", nullable = false)
     private UserModel userModel;
 
     @Column(name = "PhoneNumber", length = 40, nullable = false)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservationList;
+
 
     public PremiumUser() {
     }

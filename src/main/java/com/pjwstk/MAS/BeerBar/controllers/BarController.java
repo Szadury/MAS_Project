@@ -2,6 +2,7 @@ package com.pjwstk.MAS.BeerBar.controllers;
 
 import com.pjwstk.MAS.BeerBar.models.Bar;
 import com.pjwstk.MAS.BeerBar.models.BarTable;
+import com.pjwstk.MAS.BeerBar.models.PremiumUser;
 import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
 import com.pjwstk.MAS.BeerBar.repositories.PremiumUserRepository;
@@ -53,8 +54,8 @@ public class BarController {
             Bar bar = barRepository.getBarById(id);
             int userModelId = (int) session.getAttribute("id");
             //If current user is premium, than he will see reservation button
-            int premiumUserId = findPremiumUserByUserModel(userModelId);
-            if(premiumUserId != -1){
+            PremiumUser premiumUser = findPremiumUserByUserModel(userModelId);
+            if(premiumUser != null){
                 model.addAttribute("isPremium", "true");
             }
             model.addAttribute("bar", bar);
@@ -90,8 +91,7 @@ public class BarController {
         }
     }
 
-    private int findPremiumUserByUserModel(int userModelId) {
-        Integer id = premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
-        return id != null ? id : -1;
+    private PremiumUser findPremiumUserByUserModel(int userModelId) {
+        return premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
     }
 }

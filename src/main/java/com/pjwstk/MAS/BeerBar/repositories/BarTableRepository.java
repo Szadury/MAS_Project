@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BarTableRepository extends JpaRepository<BarTable, Long> {
-    @Query("SELECT bt FROM BarTable bt WHERE bt.barId = :barId")
+    @Query("SELECT bt FROM BarTable bt WHERE bt.bar.id = :barId")
     Iterable<BarTable> getBarTablesByBarID(@Param("barId") int barId);
 
     @Query("Select bt FROM BarTable bt where bt.id = :tableId")

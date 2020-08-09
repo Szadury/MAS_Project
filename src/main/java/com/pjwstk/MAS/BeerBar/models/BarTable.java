@@ -10,16 +10,17 @@ public class BarTable {
     @Column(name = "Id")
     private int id;
 
-    @Column(name = "Bar_Id", nullable = false)
-    private Integer barId;
+    @ManyToOne
+    @JoinColumn(name = "Bar_Id", nullable = false)
+    private Bar bar;
 
     @Column(name = "NumberOfSeats", nullable = false)
     private Integer numberOfSeats;
 
     public BarTable() {
     }
-    public BarTable(Integer barId, Integer numberOfSeats){
-        this.barId = barId;
+    public BarTable(Bar bar, Integer numberOfSeats){
+        this.bar = bar;
         this.numberOfSeats = numberOfSeats;
     }
 
@@ -27,12 +28,12 @@ public class BarTable {
         return id;
     }
 
-    public Integer getBarId() {
-        return barId;
+    public Bar getBar() {
+        return bar;
     }
 
-    public void setBarId(Integer barId) {
-        this.barId = barId;
+    public void setBar(Bar bar) {
+        this.bar = bar;
     }
 
     public Integer getNumberOfSeats() {
@@ -47,7 +48,7 @@ public class BarTable {
     public String toString() {
         return "BarTable{" +
                 "id=" + id +
-                ", barId=" + barId +
+                ", bar=" + bar +
                 ", numberOfSeats=" + numberOfSeats +
                 '}';
     }

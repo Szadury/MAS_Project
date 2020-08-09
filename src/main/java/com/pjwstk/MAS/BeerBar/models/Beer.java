@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Beer")
@@ -24,6 +25,9 @@ public class Beer {
 
     @Column(name = "Description")
     private String description;
+
+    @OneToMany(mappedBy = "beer")
+    private List<BeerBar> beerBarList;
 
     public Beer() {
     }

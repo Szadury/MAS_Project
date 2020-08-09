@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Bar")
@@ -10,11 +11,13 @@ public class Bar {
     @Column(name = "Id")
     private int id;
 
-    @Column(name = "CompanyOwner_Id")
-    private Integer companyOwnerId;
+    @ManyToOne
+    @JoinColumn(name = "CompanyOwner_Id")
+    private OwnerCompany companyOwner;
 
-    @Column(name = "PersonOwner_Id")
-    private Integer personOwnerId;
+    @ManyToOne
+    @JoinColumn(name = "PersonOwner_Id")
+    private PersonOwner personOwner;
 
     @Column(name = "Name", nullable = false)
     private String name;
@@ -34,17 +37,23 @@ public class Bar {
     @Column(name = "endHour", nullable = false)
     private int endHour;
 
+    @OneToMany(mappedBy = "bar")
+    private List<BarTable> barTableList;
+
+    @OneToMany(mappedBy = "bar")
+    private List<BeerBar> menuList;
+
     public Bar() {
     }
 
-    public Bar(Integer companyOwnerId,
-               Integer personOwnerId,
+    public Bar(OwnerCompany companyOwner,
+               PersonOwner personOwner,
                String name,
                String address,
                String contactNumber,
                String description) {
-        this.companyOwnerId = companyOwnerId;
-        this.personOwnerId = personOwnerId;
+        this.companyOwner = companyOwner;
+        this.personOwner = personOwner;
         this.name = name;
         this.address = address;
         this.contactNumber = contactNumber;
@@ -56,28 +65,28 @@ public class Bar {
         return id;
     }
 
-    public Integer getCompanyOwnerId() {
-        return companyOwnerId;
-    }
-
-    public void setCompanyOwnerId(Integer companyOwnerId) {
-        this.companyOwnerId = companyOwnerId;
-    }
-
-    public Integer getPersonOwnerId() {
-        return personOwnerId;
-    }
-
-    public void setPersonOwnerId(Integer personOwnerId) {
-        this.personOwnerId = personOwnerId;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public OwnerCompany getCompanyOwner() {
+        return companyOwner;
+    }
+
+    public void setCompanyOwner(OwnerCompany companyOwner) {
+        this.companyOwner = companyOwner;
+    }
+
+    public PersonOwner getPersonOwner() {
+        return personOwner;
+    }
+
+    public void setPersonOwner(PersonOwner personOwner) {
+        this.personOwner = personOwner;
     }
 
     public String getAddress() {
@@ -124,12 +133,14 @@ public class Bar {
     public String toString() {
         return "Bar{" +
                 "id=" + id +
-                ", companyOwnerId=" + companyOwnerId +
-                ", personOwnerId=" + personOwnerId +
+                ", companyOwner=" + companyOwner +
+                ", personOwner=" + personOwner +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", contactNumber='" + contactNumber + '\'' +
                 ", description='" + description + '\'' +
+                ", startHour=" + startHour +
+                ", endHour=" + endHour +
                 '}';
     }
 }

@@ -13,8 +13,9 @@ public class Reservation {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "PremiumUser_Id", nullable = false)
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "PremiumUser_Id", nullable = false)
+    private PremiumUser user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Bar_Id", nullable = false)
@@ -42,12 +43,12 @@ public class Reservation {
         return id;
     }
 
-    public int getUserId() {
-        return userId;
+    public PremiumUser getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(PremiumUser user) {
+        this.user = user;
     }
 
     public Bar getBar() {
@@ -98,11 +99,13 @@ public class Reservation {
         Reservation.reservationTime = reservationTime;
     }
 
+
     @Override
     public String toString() {
         return "Reservation{" +
                 "id=" + id +
-                ", userId=" + userId +
+                ", user=" + user +
+                ", bar=" + bar +
                 ", barTable=" + barTable +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +

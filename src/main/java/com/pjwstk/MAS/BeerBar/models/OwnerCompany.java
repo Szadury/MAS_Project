@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "CompanyOwner")
@@ -22,6 +23,9 @@ public class OwnerCompany extends AbstractOwner implements Owner{
 
     @Column(name = "Password", length = 30, nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "companyOwner")
+    private List<Bar> barList;
 
     public OwnerCompany() {
     }

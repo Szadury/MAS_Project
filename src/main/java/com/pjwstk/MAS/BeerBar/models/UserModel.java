@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "UserModel")
@@ -19,6 +20,12 @@ public class UserModel extends Person{
 
     @OneToOne(mappedBy = "userModel")
     private PremiumUser premiumUser;
+
+    @OneToMany(mappedBy = "userModel")
+    private List<BarReview> barReviewList;
+
+    @OneToMany(mappedBy = "userModel")
+    private List<BeerReview> beerReviewList;
 
     public UserModel() {
     }
@@ -88,6 +95,14 @@ public class UserModel extends Person{
             this.premiumUser.setUserModel(this);
         }
         this.premiumUser = premiumUser;
+    }
+
+    public List<BarReview> getBarReviewList() {
+        return barReviewList;
+    }
+
+    public List<BeerReview> getBeerReviewList() {
+        return beerReviewList;
     }
 
     @Override

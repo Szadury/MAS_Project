@@ -2,6 +2,7 @@ package com.pjwstk.MAS.BeerBar.controllers;
 
 import com.pjwstk.MAS.BeerBar.models.Bar;
 import com.pjwstk.MAS.BeerBar.models.BarTable;
+import com.pjwstk.MAS.BeerBar.models.PremiumUser;
 import com.pjwstk.MAS.BeerBar.models.Reservation;
 import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
@@ -82,10 +83,10 @@ public class ReservationController {
             LocalDateTime endTime = LocalDateTime.parse(endTimeString);
             if (bar != null && barTable != null) {
                 int userModelId = (int) session.getAttribute("id");
-                int premiumUserId = findPremiumUserByUserModel(userModelId);
-                if (premiumUserId != -1) {
+                PremiumUser premiumUser = findPremiumUserByUserModel(userModelId);
+                if (premiumUser != null) {
                     Reservation reservation = new Reservation();
-                    reservation.setUserId(premiumUserId);
+                    reservation.setUser(premiumUser);
                     reservation.setStatus(Reservation.StatusType.Pending);
                     reservation.setBar(bar);
                     reservation.setBarTable(barTable);
@@ -125,9 +126,9 @@ public class ReservationController {
         return availableReservations;
     }
 
-    private int findPremiumUserByUserModel(int userModelId) {
-        Integer id = premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
-        return id != null ? id : -1;
+    private PremiumUser findPremiumUserByUserModel(int userModelId) {
+        PremiumUser pu = premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
+        return pu;
     }
 
     private boolean reservationForGivenHourExists(BarTable bt, List<Reservation> currentReservations, LocalDateTime givenHourTime, LocalDateTime endHourTime) {

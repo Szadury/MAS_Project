@@ -10,20 +10,22 @@ public class BeerBar {
     @Column(name = "Id")
     private int id;
 
-    @Column(name = "Bar_Id", nullable = false)
-    private Integer barId;
+    @ManyToOne
+    @JoinColumn(name = "Bar_Id", nullable = false)
+    private Bar bar;
 
-    @Column(name = "Beer_Id", nullable = false)
-    private Integer beerId;
+    @ManyToOne
+    @JoinColumn(name = "Beer_Id", nullable = false)
+    private Beer beer;
 
     @Column(name = "isActive", nullable = false)
     private boolean isActive;
 
     public BeerBar() {
     }
-    public BeerBar(Integer barId, Integer beerId, boolean isActive) {
-        this.barId = barId;
-        this.beerId = beerId;
+    public BeerBar(Bar bar, Beer beer, boolean isActive) {
+        this.bar = bar;
+        this.beer = beer;
         this.isActive = isActive;
     }
 

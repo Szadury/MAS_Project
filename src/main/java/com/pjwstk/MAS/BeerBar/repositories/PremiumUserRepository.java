@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PremiumUserRepository  extends JpaRepository<PremiumUser, Long> {
 
-    @Query("Select pu.id from PremiumUser pu where pu.userModel.id = :userId")
-    Integer findPremiumUserIdWithUserModelId(@Param("userId") int userId);
+    @Query("Select pu from PremiumUser pu where pu.userModel.id = :userId")
+    PremiumUser findPremiumUserIdWithUserModelId(@Param("userId") int userId);
 
 
 }

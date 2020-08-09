@@ -1,8 +1,14 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 
+@Entity
+@Table(name = "PersonOwner")
 public class PersonOwner extends Person implements Owner {
 
     @Column(name = "Email", nullable = false)
@@ -16,6 +22,9 @@ public class PersonOwner extends Person implements Owner {
 
     @Column(name="Password", length = 30, nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "personOwner")
+    private List<Bar> barList;
 
     public PersonOwner() {
     }
