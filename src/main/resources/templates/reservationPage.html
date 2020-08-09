@@ -26,7 +26,9 @@
         </form>
     </div>
     <div class="grid-container" id="available_seats" th:if="${availableSeats != null}">
-
+        <script th:inline="javascript">
+            var reservationsJs = [[${availableReservations}]];
+        </script>
         <p>Dostępne godziny</p>
         <table>
             <tbody class="table_body">
@@ -36,11 +38,10 @@
             <tr th:each="seat : ${availableSeats}">
                 <script th:inline="javascript">
                     var seatJs = [[${seat}]];
-                    var reservationsJs = [[${availableReservations}]];
                 </script>
                 <td><span
                         th:text="${'Stolik no.' + seat.id + ' dla ' + seat.numberOfSeats + ' osób'}"></span>
-                    <button type="button" th:onclick="showReservationsForSeat(seatJs, reservationsJs);">Zobacz dostępne godziny >  </button>
+                    <button type="button" th:onclick="'showReservationsForSeat(' + ${seat.id} + ', ' + reservationsJs + ');'">Zobacz dostępne godziny > </button>
                 </td>
             </tr>
             </tbody>
