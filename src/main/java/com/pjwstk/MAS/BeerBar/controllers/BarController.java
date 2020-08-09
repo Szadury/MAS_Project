@@ -81,7 +81,7 @@ public class BarController {
                 if(noReservations != null){
                     model.addAttribute("noReservations", "True");
                 }
-                return "reservationDate";
+                return "reservationPage";
             }
             else {
                 redirectAttributes.addAttribute("noSeats", "true");

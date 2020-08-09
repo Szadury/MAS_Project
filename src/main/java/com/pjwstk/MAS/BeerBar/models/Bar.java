@@ -11,11 +11,11 @@ public class Bar {
     @Column(name = "Id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CompanyOwner_Id")
     private OwnerCompany companyOwner;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PersonOwner_Id")
     private PersonOwner personOwner;
 

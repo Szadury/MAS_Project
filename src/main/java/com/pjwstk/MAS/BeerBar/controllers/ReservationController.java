@@ -54,14 +54,18 @@ public class ReservationController {
             Iterable<BarTable> barTables = barTableRepositoryRepository.getBarTablesByBarID(barId);
             Iterable<Reservation> reservationIterable = reservationRepository.getReservationsForDateAndBar(barId, year, month, day);
 
+            List<BarTable> seats = new ArrayList<>();
+            barTables.forEach(seats::add);
+
             List<Reservation> currentReservations = new ArrayList<>();
             reservationIterable.forEach(currentReservations::add);
 
             List<Reservation> availableReservations = findAvailableReservation(barTables, bar, currentReservations, year, month, day);//new ArrayList<>();
             if (!availableReservations.isEmpty()) {
                 model.addAttribute("availableReservations", availableReservations);
+                model.addAttribute("availableSeats", seats);
                 model.addAttribute("barId", barId);
-                return "availableReservations";
+                return "reservationPage";
             } else {
                 redirectAttributes.addAttribute("barId", barId);
                 redirectAttributes.addAttribute("NoReservations", "True");
