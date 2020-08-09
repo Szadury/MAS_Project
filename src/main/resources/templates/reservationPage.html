@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Złóż rezerwację</title>
+</head>
+<body>
+<script type="text/javascript" th:src="@{/js/reservations.js}"></script>
+<link href="/css/generalStyle.css" rel="stylesheet">
+<link href="/css/reservationPage.css" rel="stylesheet">
+<a href="/logout">
+    <button class="logout">Wyloguj</button>
+</a>
+<a th:href="@{'/bar?id=' + ${barId}}">
+    <button class="goBack">Wróć</button>
+</a>
+<div class="reservation-grid">
+
+    <div class="grid-container" id="pick_date">
+        <form th:action="@{/reservation/findSeats}" method="post">
+            <p>Wprowadź datę rezerwacji</p>
+            <p th:if="${noReservations}">Brak dostępnych rezerwacji lub miejsc dla podanego dnia.</p>
+            <input type="text" name="barId" th:value="${barId}">
+            <input type="date" name="reservation-date" th:value="${now}" th:min="${now}" autofocus="autofocus"><br>
+            <input type="submit" value="Szukaj"/>
+        </form>
+    </div>
+    <div class="grid-container" id="available_seats" th:if="${availableSeats != null}">
+
+        <p>Dostępne godziny</p>
+        <table>
+            <tbody class="table_body">
+            <tr th:if="${availableSeats.empty}">
+                <td colspan="2">Brak dostępnych miejsc!</td>
+            </tr>
+            <tr th:each="seat : ${availableSeats}">
+                <script th:inline="javascript">
+                    var seatJs = [[${seat}]];
+                    var reservationsJs = [[${availableReservations}]];
+                </script>
+                <td><span
+                        th:text="${'Stolik no.' + seat.id + ' dla ' + seat.numberOfSeats + ' osób'}"></span>
+                    <button type="button" th:onclick="showReservationsForSeat(seatJs, reservationsJs);">Zobacz dostępne godziny >  </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="grid-container" id="book_available_hour">
+    </div>
+</div>
+</body>
+</html>

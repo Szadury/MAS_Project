@@ -1,0 +1,73 @@
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 28%;
+}
+
+tr {
+    padding-right: 200px;
+    font-size: large;
+    border: 1px solid #ffa500;
+}
+
+tr:hover {
+    border: 2px solid #ffa400;
+}
+
+input[type=datetime-local] {
+    display: none;
+}
+
+input[type=text] {
+    display: none;
+}
+
+input[type=submit] {
+    background-color: #ffa500;
+    color: white;
+    padding: 14px 20px;
+    margin-left: 50px;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+}
+form{
+    margin-top: 20%;
+}
+
+input[type=date]{
+    border: 1px solid #ffa500;
+    width: 40%;
+    height: 30px;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 16px;
+}
+
+input[type=text]{
+    display: none;
+}
+input[type=submit] {
+    background-color: #ffa500;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 15%;
+}
+
+.reservation-grid {
+    display: grid;
+    margin-top: 5%;
+    background-color: red;
+    grid-template-columns: 30% 30% 30%;
+    grid-template-rows: 800px;
+}
+
+.grid-container{
+    border-left: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+#available_seats{
+
+}
