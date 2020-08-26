@@ -72,6 +72,7 @@ public class ReservationController {
                 model.addAttribute("reservationDate", date);
                 model.addAttribute("availableSeats", availableSeatsForCurrentDay);
                 model.addAttribute("barId", barId);
+                model.addAttribute("barName", bar.getName());
                 return "reservationPage";
             } else {
                 redirectAttributes.addAttribute("barId", barId);
@@ -108,6 +109,7 @@ public class ReservationController {
                 model.addAttribute("availableSeats", availableSeatsForCurrentDay);
                 model.addAttribute("seatId", seatId);
                 model.addAttribute("barId", barId);
+                model.addAttribute("barName", bar.getName());
                 return "reservationPage";
             } else {
                 redirectAttributes.addAttribute("barId", barId);

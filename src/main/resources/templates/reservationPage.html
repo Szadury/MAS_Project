@@ -11,6 +11,7 @@
 <a href="/logout">
     <button class="logout">Wyloguj</button>
 </a>
+<p><span th:text="${barName}"></span></p>
 <a th:href="@{'/bar?id=' + ${barId}}">
     <button class="goBack">Wróć</button>
 </a>
@@ -46,7 +47,7 @@
         </table>
     </div>
     <div class="grid-container" id="book_available_hour" th:if="${availableReservations != null}">
-        <span th:text="${'Dostępne rezerwacje na stolik no. ' + seatId}"></span>
+        <p><span th:text="${'Dostępne rezerwacje na stolik no. ' + seatId}"></span></p>
         <table>
             <tbody class="table_body">
             <tr th:if="${availableReservations.empty}">
