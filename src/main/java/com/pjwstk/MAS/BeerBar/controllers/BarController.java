@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -73,10 +72,11 @@ public class BarController {
             return "login";
         }
         else {
-            Iterator<BarTable> barTableIterator = barTableRepository.getBarTablesByBarID(barId).iterator();
-            if(barTableIterator.hasNext()) {
+            Bar bar = barRepository.getBarById(barId);
+            List<BarTable> barTableList = barTableRepository.getBarTablesByBar(bar);
+            if(!barTableList.isEmpty()) {
                 model.addAttribute("now", LocalDate.now());
-                model.addAttribute("hasSeats", barTableIterator.hasNext());
+                model.addAttribute("hasSeats", !barTableList.isEmpty());
                 model.addAttribute("barId", barId);
                 if(noReservations != null){
                     model.addAttribute("noReservations", "True");

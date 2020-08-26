@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,11 +38,14 @@ public class Bar {
     @Column(name = "endHour", nullable = false)
     private int endHour;
 
-    @OneToMany(mappedBy = "bar")
-    private List<BarTable> barTableList;
+    @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
+    private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bar")
-    private List<BeerBar> menuList;
+    @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<BarTable> barTables = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
+    private List<BeerBar> menuList = new ArrayList<>();
 
     public Bar() {
     }
@@ -127,6 +131,18 @@ public class Bar {
 
     public void setEndHour(int endHour) {
         this.endHour = endHour;
+    }
+
+    public List<BarTable> getBarTables() {
+        return barTables;
+    }
+
+    public List<BeerBar> getMenuList() {
+        return menuList;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
     @Override

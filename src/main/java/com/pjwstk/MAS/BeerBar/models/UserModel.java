@@ -6,6 +6,7 @@ import java.util.List;
 @Entity
 @Table(name = "UserModel")
 public class UserModel extends Person{
+
     @Column(name = "Nickname", nullable = false)
     protected String username;
 

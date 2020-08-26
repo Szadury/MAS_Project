@@ -8,9 +8,14 @@ import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
 import com.pjwstk.MAS.BeerBar.repositories.PremiumUserRepository;
 import com.pjwstk.MAS.BeerBar.repositories.ReservationRepository;
+import org.hibernate.Hibernate;
+import org.hibernate.sql.Template;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,11 +27,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/reservation")
 public class ReservationController {
 
+    Logger logger = LoggerFactory.getLogger(ReservationController.class);
     @Autowired
     ReservationRepository reservationRepository;
 
@@ -39,7 +46,7 @@ public class ReservationController {
     @Autowired
     PremiumUserRepository premiumUserRepository;
 
-    @PostMapping("/findSeats")
+    @GetMapping("/findSeats")
     public String findSeats(@RequestParam(name = "reservation-date") String date, @RequestParam(name = "barId") int barId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
@@ -50,20 +57,56 @@ public class ReservationController {
             int day = Integer.parseInt(date.substring(8, 10));
 
             Bar bar = barRepository.getBarById(barId);
+            List<BarTable> barTables = bar.getBarTables();
+            List<Reservation> currentReservations = bar.getReservations().stream().filter(reservation ->
+                    reservation.getStartTime().getYear() == year &&
+                    reservation.getStartTime().getMonth().getValue() == month &&
+                    reservation.getStartTime().getDayOfMonth() == day).collect(Collectors.toList());
 
-            Iterable<BarTable> barTables = barTableRepositoryRepository.getBarTablesByBarID(barId);
-            Iterable<Reservation> reservationIterable = reservationRepository.getReservationsForDateAndBar(barId, year, month, day);
+//            List<Reservation> currentReservations = reservationRepository.getReservationsForDateAndBar(bar, year, month, day);
+            List<Reservation> availableReservations = findAllAvailableReservations(barTables, bar, currentReservations, year, month, day);
+            List<BarTable> availableSeatsForCurrentDay = getAvailableSeats(availableReservations);
 
-            List<BarTable> seats = new ArrayList<>();
-            barTables.forEach(seats::add);
-
-            List<Reservation> currentReservations = new ArrayList<>();
-            reservationIterable.forEach(currentReservations::add);
-
-            List<Reservation> availableReservations = findAvailableReservation(barTables, bar, currentReservations, year, month, day);//new ArrayList<>();
             if (!availableReservations.isEmpty()) {
+                model.addAttribute("now", LocalDate.now());
+                model.addAttribute("reservationDate", date);
+                model.addAttribute("availableSeats", availableSeatsForCurrentDay);
+                model.addAttribute("barId", barId);
+                return "reservationPage";
+            } else {
+                redirectAttributes.addAttribute("barId", barId);
+                redirectAttributes.addAttribute("NoReservations", "True");
+                return "redirect:/bar/hasSeats";
+            }
+        }
+    }
+
+    @GetMapping("/availableReservationsForSeat")
+    public String findAvailableReservationsForSeat(@RequestParam(name = "reservation-date") String date, @RequestParam(name = "barId") int barId,
+                                                   @RequestParam(name = "seat-id") int seatId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (session.getAttribute("id") == null) {
+            model.addAttribute("loginFirst", "not logged in");
+            return "login";
+        } else {
+            int year = Integer.parseInt(date.substring(0, 4));
+            int month = Integer.parseInt(date.substring(5, 7));
+            int day = Integer.parseInt(date.substring(8, 10));
+
+            Bar bar = barRepository.getBarById(barId);
+
+            List<BarTable> barTables = barTableRepositoryRepository.getBarTablesByBar(bar);
+            List<Reservation> currentReservations = reservationRepository.getReservationsForDateAndBar(bar, year, month, day);
+            List<Reservation> availableReservations = findAllAvailableReservations(barTables, bar, currentReservations, year, month, day);
+            List<BarTable> availableSeatsForCurrentDay = getAvailableSeats(availableReservations);
+            availableReservations = findAvailableReservationPerSeat(seatId, bar, availableReservations, year, month, day);
+            logger.info(String.valueOf(seatId));
+            logger.info(String.valueOf(availableReservations));
+            if (!availableReservations.isEmpty()) {
+                model.addAttribute("now", LocalDate.now());
+                model.addAttribute("reservationDate", date);
                 model.addAttribute("availableReservations", availableReservations);
-                model.addAttribute("availableSeats", seats);
+                model.addAttribute("availableSeats", availableSeatsForCurrentDay);
+                model.addAttribute("seatId", seatId);
                 model.addAttribute("barId", barId);
                 return "reservationPage";
             } else {
@@ -107,7 +150,18 @@ public class ReservationController {
         }
     }
 
-    private List<Reservation> findAvailableReservation(Iterable<BarTable> barTables, Bar bar, List<Reservation> currentReservations, int year, int month, int day) {
+    private List<BarTable> getAvailableSeats(List<Reservation> availableReservations) {
+        List<BarTable> availableSeats = new ArrayList<>();
+        for(Reservation reservation: availableReservations){
+            BarTable bt = reservation.getBarTable();
+            if(!availableSeats.contains(bt)){
+                availableSeats.add(bt);
+            }
+        }
+        return availableSeats;
+    }
+
+    private List<Reservation> findAllAvailableReservations(List<BarTable> barTables, Bar bar, List<Reservation> currentReservations, int year, int month, int day) {
         List<Reservation> availableReservations = new ArrayList<>();
         for (BarTable bt : barTables) {
             int currentReservationStartHour = bar.getStartHour();
@@ -130,9 +184,18 @@ public class ReservationController {
         return availableReservations;
     }
 
+    private List<Reservation> findAvailableReservationPerSeat(int seatId, Bar bar, List<Reservation> currentReservations, int year, int month, int day){
+        List<Reservation> availableReservations = new ArrayList<>();
+        for(Reservation res: currentReservations){
+            if(res.getBarTable().getId() == seatId){
+                availableReservations.add(res);
+            }
+        }
+        return availableReservations;
+    }
+
     private PremiumUser findPremiumUserByUserModel(int userModelId) {
-        PremiumUser pu = premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
-        return pu;
+        return premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
     }
 
     private boolean reservationForGivenHourExists(BarTable bt, List<Reservation> currentReservations, LocalDateTime givenHourTime, LocalDateTime endHourTime) {
