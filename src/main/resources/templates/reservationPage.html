@@ -15,39 +15,57 @@
     <button class="goBack">Wróć</button>
 </a>
 <div class="reservation-grid">
-
     <div class="grid-container" id="pick_date">
-        <form th:action="@{/reservation/findSeats}" method="post">
+        <form th:action="@{/reservation/findSeats}" method="get">
             <p>Wprowadź datę rezerwacji</p>
             <p th:if="${noReservations}">Brak dostępnych rezerwacji lub miejsc dla podanego dnia.</p>
             <input type="text" name="barId" th:value="${barId}">
-            <input type="date" name="reservation-date" th:value="${now}" th:min="${now}" autofocus="autofocus"><br>
+            <input type="date" name="reservation-date" th:value="${now}" th:min="${now}"><br>
             <input type="submit" value="Szukaj"/>
         </form>
     </div>
     <div class="grid-container" id="available_seats" th:if="${availableSeats != null}">
-        <script th:inline="javascript">
-            var reservationsJs = [[${availableReservations}]];
-        </script>
-        <p>Dostępne godziny</p>
+        <p><span th:text="${'Dostępne godziny na dzień: ' + reservationDate}"></span></p>
         <table>
             <tbody class="table_body">
             <tr th:if="${availableSeats.empty}">
                 <td colspan="2">Brak dostępnych miejsc!</td>
             </tr>
             <tr th:each="seat : ${availableSeats}">
-                <script th:inline="javascript">
-                    var seatJs = [[${seat}]];
-                </script>
-                <td><span
-                        th:text="${'Stolik no.' + seat.id + ' dla ' + seat.numberOfSeats + ' osób'}"></span>
-                    <button type="button" th:onclick="'showReservationsForSeat(' + ${seat.id} + ', ' + reservationsJs + ');'">Zobacz dostępne godziny > </button>
-                </td>
+                <form th:action="@{/reservation/availableReservationsForSeat}" method="get">
+                    <td><span
+                            th:text="${'Stolik no.' + seat.id + ' dla ' + seat.numberOfSeats + ' osób'}"></span>
+                        <input type="text" name="barId" th:value="${barId}" hidden>
+                        <input type="text" name="seat-id" th:value="${seat.id}" hidden>
+                        <input type="date" name="reservation-date" th:value="${reservationDate}" hidden><br>
+                        <input type="submit" value="Zobacz dostępne godziny >">
+                    </td>
+                </form>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="grid-container" id="book_available_hour">
+    <div class="grid-container" id="book_available_hour" th:if="${availableReservations != null}">
+        <span th:text="${'Dostępne rezerwacje na stolik no. ' + seatId}"></span>
+        <table>
+            <tbody class="table_body">
+            <tr th:if="${availableReservations.empty}">
+                <td colspan="2"> Brak dostępnych rezerwacji! </td>
+            </tr>
+            <tr th:each="reservation : ${availableReservations}">
+                <form th:action="@{/reservation/createReservation}" method="post">
+                    <td><span th:text="${'Stolik no.' + reservation.barTable.id + ' dla ' + reservation.barTable.numberOfSeats + ' osób  |   ' + #temporals.format(reservation.startTime, 'HH:mm') + ' - ' + #temporals.format(reservation.endTime, 'HH:mm')}"> Name </span>
+                        <input type="text" name="tableId" th:value="${reservation.barTable.id}"/>
+                        <input type="text" name="startTime" th:value="${reservation.startTime}"/>
+                        <input type="text" name="endTime" th:value="${reservation.endTime}"/>
+                        <input type="text" name="barId" th:value="${barId}"/>
+                        <input type="submit" value="Rezerwuj">
+                    </td>
+                </form>
+
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>
