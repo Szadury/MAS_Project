@@ -2,7 +2,11 @@ table {
     margin: 0 auto;
     border-collapse: collapse;
 }
-
+.barList h2{
+    color: black;
+    background: #f44703;
+    padding: 10px 20px;
+}
 tr{
     padding-right: 200px;
     font-size: large;

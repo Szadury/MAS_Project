@@ -19,8 +19,9 @@
 }
 
 .description-container span{
-    padding: 0 200px 150px 0;
+    padding: 10px 200px 150px 10px;
     border: 1px solid #ffa500;
+    border-radius: 16px;
 }
 
 .name-container{
