@@ -39,9 +39,6 @@ public class Bar {
     private int endHour;
 
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
-    private List<Reservation> reservations = new ArrayList<>();
-
-    @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<BarTable> barTables = new ArrayList<>();
 
     @OneToMany(mappedBy = "bar", cascade = CascadeType.ALL)
@@ -139,10 +136,6 @@ public class Bar {
 
     public List<BeerBar> getMenuList() {
         return menuList;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
     }
 
     @Override

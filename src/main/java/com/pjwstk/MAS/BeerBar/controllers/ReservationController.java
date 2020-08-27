@@ -26,13 +26,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/reservation")
 public class ReservationController {
-
     Logger logger = LoggerFactory.getLogger(ReservationController.class);
     @Autowired
     ReservationRepository reservationRepository;
@@ -52,18 +52,16 @@ public class ReservationController {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
         } else {
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            int day = Integer.parseInt(date.substring(8, 10));
+            int year = getYearFromDate(date);
+            int month = getMonthFromDate(date);
+            int day = getDayFromDate(date);
 
             Bar bar = barRepository.getBarById(barId);
             List<BarTable> barTables = bar.getBarTables();
-            List<Reservation> currentReservations = bar.getReservations().stream().filter(reservation ->
-                    reservation.getStartTime().getYear() == year &&
-                    reservation.getStartTime().getMonth().getValue() == month &&
-                    reservation.getStartTime().getDayOfMonth() == day).collect(Collectors.toList());
-
-//            List<Reservation> currentReservations = reservationRepository.getReservationsForDateAndBar(bar, year, month, day);
+            List<Reservation> currentReservations = new ArrayList<>();
+            for(BarTable bt: barTables){
+                currentReservations.addAll(getReservationsOfTableByDate(bt, year, month, day));
+            }
             List<Reservation> availableReservations = findAllAvailableReservations(barTables, bar, currentReservations, year, month, day);
             List<BarTable> availableSeatsForCurrentDay = getAvailableSeats(availableReservations);
 
@@ -88,14 +86,17 @@ public class ReservationController {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
         } else {
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            int day = Integer.parseInt(date.substring(8, 10));
+            int year = getYearFromDate(date);
+            int month = getMonthFromDate(date);
+            int day = getDayFromDate(date);
 
             Bar bar = barRepository.getBarById(barId);
-
-            List<BarTable> barTables = barTableRepositoryRepository.getBarTablesByBar(bar);
-            List<Reservation> currentReservations = reservationRepository.getReservationsForDateAndBar(bar, year, month, day);
+            List<BarTable> barTables = bar.getBarTables();
+            List<Reservation> currentReservations = new ArrayList<>();
+            for(BarTable bt: barTables){
+                currentReservations.addAll(getReservationsOfTableByDate(bt, year, month, day));
+            }
+//            List<Reservation> currentReservations = reservationRepository.getReservationsForDateAndTable(bar, year, month, day);
             List<Reservation> availableReservations = findAllAvailableReservations(barTables, bar, currentReservations, year, month, day);
             List<BarTable> availableSeatsForCurrentDay = getAvailableSeats(availableReservations);
             availableReservations = findAvailableReservationPerSeat(seatId, bar, availableReservations, year, month, day);
@@ -117,6 +118,13 @@ public class ReservationController {
         }
     }
 
+    private List<Reservation> getReservationsOfTableByDate(BarTable bt, int year, int month,int day) {
+        return bt.getReservations().stream().filter(reservation ->
+                reservation.getStartTime().getYear() == year &&
+                        reservation.getStartTime().getMonth().getValue() == month &&
+                        reservation.getStartTime().getDayOfMonth() == day).collect(Collectors.toList());
+    }
+
     @PostMapping("/createReservation")
     public String createReservation(@RequestParam(name = "startTime") String startTimeString, @RequestParam(name = "endTime") String endTimeString,
                                     @RequestParam(name = "barId") int barId, @RequestParam(name = "tableId") int tableId, Model model, HttpSession session) {
@@ -135,7 +143,6 @@ public class ReservationController {
                     Reservation reservation = new Reservation();
                     reservation.setUser(premiumUser);
                     reservation.setStatus(Reservation.StatusType.Pending);
-                    reservation.setBar(bar);
                     reservation.setBarTable(barTable);
                     reservation.setStartTime(startTime);
                     reservation.setEndTime(endTime);
@@ -149,6 +156,12 @@ public class ReservationController {
             }
         }
     }
+
+    private int getYearFromDate(String date) {return Integer.parseInt(date.substring(0, 4));}
+
+    private int getMonthFromDate(String date) {return Integer.parseInt(date.substring(5, 7));}
+
+    private int getDayFromDate(String date) {return Integer.parseInt(date.substring(8, 10));}
 
     private List<BarTable> getAvailableSeats(List<Reservation> availableReservations) {
         List<BarTable> availableSeats = new ArrayList<>();
@@ -171,7 +184,6 @@ public class ReservationController {
                 LocalDateTime endHourTime = givenHourTime.plusHours(Reservation.reservationTime);
                 if (!reservationForGivenHourExists(bt, currentReservations, givenHourTime, endHourTime)) {
                     Reservation reservation = new Reservation();
-                    reservation.setBar(bar);
                     reservation.setBarTable(bt);
                     reservation.setStartTime(givenHourTime);
                     reservation.setEndTime(givenHourTime.plusHours(Reservation.reservationTime));

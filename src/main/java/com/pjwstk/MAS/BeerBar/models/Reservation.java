@@ -18,10 +18,6 @@ public class Reservation {
     private PremiumUser user;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "Bar_Id", nullable = false)
-    private Bar bar;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BarTable_Id", nullable = false)
     private BarTable barTable;
 
@@ -49,14 +45,6 @@ public class Reservation {
 
     public void setUser(PremiumUser user) {
         this.user = user;
-    }
-
-    public Bar getBar() {
-        return bar;
-    }
-
-    public void setBar(Bar bar) {
-        this.bar = bar;
     }
 
     public BarTable getBarTable() {
@@ -105,7 +93,6 @@ public class Reservation {
         return "Reservation{" +
                 "id=" + id +
                 ", user=" + user +
-                ", bar=" + bar +
                 ", barTable=" + barTable +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +

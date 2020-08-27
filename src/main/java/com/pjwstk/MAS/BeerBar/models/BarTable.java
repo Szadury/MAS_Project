@@ -1,6 +1,7 @@
 package com.pjwstk.MAS.BeerBar.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "BarTable")
@@ -16,6 +17,10 @@ public class BarTable {
 
     @Column(name = "NumberOfSeats", nullable = false)
     private Integer numberOfSeats;
+
+    @OneToMany(mappedBy = "barTable", fetch = FetchType.EAGER)
+    private List<Reservation> reservations;
+
 
     public BarTable() {
     }
@@ -42,6 +47,10 @@ public class BarTable {
 
     public void setNumberOfSeats(Integer numberOfSeats) {
         this.numberOfSeats = numberOfSeats;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
     @Override
