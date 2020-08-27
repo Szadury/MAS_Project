@@ -33,11 +33,10 @@ public class BarController {
     @GetMapping("/bars")
     public String getBars(Model model, HttpSession session) {
         List<Bar> barList = barRepository.findAll();
-        if(session.getAttribute("id") == null){
+        if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        }
-        else{
+        } else {
             model.addAttribute("bars", barList);
             return "barList";
         }
@@ -45,20 +44,18 @@ public class BarController {
 
     @GetMapping("")
     public String getBarPage(@RequestParam int id, @RequestParam(required = false) String noSeats, Model model, HttpSession session) {
-        if(session.getAttribute("id") == null){
+        if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        }
-        else {
+        } else {
             Bar bar = barRepository.getBarById(id);
             int userModelId = (int) session.getAttribute("id");
-            //If current user is premium, than he will see reservation button
             PremiumUser premiumUser = findPremiumUserByUserModel(userModelId);
-            if(premiumUser != null){
+            if (premiumUser != null) {
                 model.addAttribute("isPremium", "true");
             }
             model.addAttribute("bar", bar);
-            if(noSeats != null){
+            if (noSeats != null) {
                 model.addAttribute("noSeats", "true");
             }
             return "barPage";
@@ -67,24 +64,22 @@ public class BarController {
 
     @GetMapping("hasSeats")
     public String getReservationDatePage(@RequestParam int barId, @RequestParam(required = false, name = "NoReservations") String noReservations, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        if(session.getAttribute("id") == null){
+        if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        }
-        else {
+        } else {
             Bar bar = barRepository.getBarById(barId);
-            List<BarTable> barTableList = barTableRepository.getBarTablesByBar(bar);
-            if(!barTableList.isEmpty()) {
+            List<BarTable> barTableList = bar.getBarTables();
+            if (!barTableList.isEmpty()) {
                 model.addAttribute("now", LocalDate.now());
                 model.addAttribute("hasSeats", !barTableList.isEmpty());
                 model.addAttribute("barId", barId);
-                if(noReservations != null){
+                if (noReservations != null) {
                     model.addAttribute("noReservations", "True");
                 }
                 model.addAttribute("barName", bar.getName());
                 return "reservationPage";
-            }
-            else {
+            } else {
                 redirectAttributes.addAttribute("noSeats", "true");
                 redirectAttributes.addAttribute("id", barId);
                 return "redirect:/bar";

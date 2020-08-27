@@ -26,7 +26,6 @@ public class IndexController {
     @PostMapping("/login")
     public String authLogin(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model) {
         Iterator<UserModel> userIterable = userRepository.findUserWithPassword(username, password).iterator();
-
         if (userIterable.hasNext()) {
             UserModel userModel = userIterable.next();
             session.setAttribute("username", username);

@@ -1,16 +1,42 @@
-table {
+.barList table {
     margin: 0 auto;
     border-collapse: collapse;
-}
-.barList h2{
-    color: black;
-    background: #f44703;
-    padding: 10px 20px;
-}
-tr{
-    padding-right: 200px;
-    font-size: large;
-    border: 1px solid #ffa500;
+    width: 40%;
 }
 
-tr:hover {border: 2px solid #ffa400;}
+
+.barList p{
+    color: black;
+    background: #ffa500;
+    width: 25%;
+    margin: 10px auto 0 auto;
+    padding: 10px 0px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+.barList tr{
+
+}
+
+.barList{
+    width: 100%;
+}
+
+.barList td{
+    font-size: large;
+    padding: 10px 0px;
+    border: 1px solid #ffa500;
+    width: 100%;
+    box-shadow: 0 5px 25px rgba(0,0,0,.1);
+    transition: transform 0.5s;
+}
+
+.barList td:hover {
+    transform: scale(1.1);
+    z-index: 100;
+    background: #ffa500;
+    box-shadow: 0 5px 25px rgba(0,0,0,.2);
+    color: #fff;
+    border: 2px solid #ffa400;
+}
