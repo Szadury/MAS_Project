@@ -10,7 +10,7 @@
     background: #ffa500;
     width: 25%;
     margin: 10px auto 0 auto;
-    padding: 10px 0px;
+    padding: 10px 0;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
 }
@@ -25,7 +25,7 @@
 
 .barList td{
     font-size: large;
-    padding: 10px 0px;
+    padding: 10px 0;
     border: 1px solid #ffa500;
     width: 100%;
     box-shadow: 0 5px 25px rgba(0,0,0,.1);
