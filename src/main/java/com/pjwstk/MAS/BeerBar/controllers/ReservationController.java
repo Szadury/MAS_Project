@@ -6,12 +6,9 @@ import com.pjwstk.MAS.BeerBar.models.PremiumUser;
 import com.pjwstk.MAS.BeerBar.models.Reservation;
 import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
-import com.pjwstk.MAS.BeerBar.repositories.PremiumUserRepository;
-import com.pjwstk.MAS.BeerBar.repositories.ReservationRepository;
-import org.hibernate.Hibernate;
-import org.hibernate.sql.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pjwstk.MAS.BeerBar.services.ReservationService;
+import com.pjwstk.MAS.BeerBar.services.UserService;
+import com.pjwstk.MAS.BeerBar.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,17 +21,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/reservation")
 public class ReservationController {
     @Autowired
-    ReservationRepository reservationRepository;
+    ReservationService reservationService;
 
     @Autowired
     BarRepository barRepository;
@@ -43,18 +36,18 @@ public class ReservationController {
     BarTableRepository barTableRepositoryRepository;
 
     @Autowired
-    PremiumUserRepository premiumUserRepository;
+    UserService userService;
 
     @GetMapping("/findSeats")
     public String findSeats(@RequestParam(name = "reservation-date") String date, @RequestParam(name = "barId") int barId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        } else {
-            Bar bar = barRepository.getBarById(barId);
-            List<Reservation> availableReservations = findAllAvailableReservations(date, bar);
-            List<BarTable> availableSeatsForCurrentDay = getAvailableSeats(availableReservations);
-
+        }
+        Bar bar = barRepository.getBarById(barId);
+        if (bar != null && DateUtils.isCorrectDateFormat(date)) {
+            List<Reservation> availableReservations = reservationService.findAvailableReservationsByDateAndBar(date, bar);
+            List<BarTable> availableSeatsForCurrentDay = reservationService.findAvailableSeatsByAvailableReservations(availableReservations);
             if (!availableReservations.isEmpty()) {
                 model.addAttribute("now", LocalDate.now());
                 model.addAttribute("reservationDate", date);
@@ -62,12 +55,12 @@ public class ReservationController {
                 model.addAttribute("barId", barId);
                 model.addAttribute("barName", bar.getName());
                 return "reservationPage";
-            } else {
-                redirectAttributes.addAttribute("barId", barId);
-                redirectAttributes.addAttribute("NoReservations", "True");
-                return "redirect:/bar/hasSeats";
             }
+            redirectAttributes.addAttribute("barId", barId);
+            redirectAttributes.addAttribute("NoReservations", "True");
+            return "redirect:/bar/hasSeats";
         }
+        return "redirect:/bar/bars";
     }
 
     @GetMapping("/availableReservationsForSeat")
@@ -76,12 +69,12 @@ public class ReservationController {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        } else {
-            Bar bar = barRepository.getBarById(barId);
-            List<Reservation> availableReservations = findAllAvailableReservations(date, bar);
-            List<BarTable> availableSeatsForCurrentDay = getAvailableSeats(availableReservations);
-
-            availableReservations = findAvailableReservationPerSeat(seatId, availableReservations);
+        }
+        Bar bar = barRepository.getBarById(barId);
+        if (bar != null && DateUtils.isCorrectDateFormat(date)) {
+            List<Reservation> availableReservations = reservationService.findAvailableReservationsByDateAndBar(date, bar);
+            List<BarTable> availableSeatsForCurrentDay = reservationService.findAvailableSeatsByAvailableReservations(availableReservations);
+            availableReservations = reservationService.findAvailableReservationPerSeat(seatId, availableReservations);
             if (!availableReservations.isEmpty()) {
                 model.addAttribute("now", LocalDate.now());
                 model.addAttribute("reservationDate", date);
@@ -92,12 +85,12 @@ public class ReservationController {
                 model.addAttribute("seatId", seatId);
                 model.addAttribute("availableReservations", availableReservations);
                 return "reservationPage";
-            } else {
-                redirectAttributes.addAttribute("barId", barId);
-                redirectAttributes.addAttribute("NoReservations", "True");
-                return "redirect:/bar/hasSeats";
             }
+            redirectAttributes.addAttribute("barId", barId);
+            redirectAttributes.addAttribute("NoReservations", "True");
+            return "redirect:/bar/hasSeats";
         }
+        return "redirect:/bar/bars";
     }
 
     @PostMapping("/createReservation")
@@ -106,124 +99,27 @@ public class ReservationController {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        } else {
-            BarTable barTable = barTableRepositoryRepository.getById(tableId);
-            LocalDateTime startTime = LocalDateTime.parse(startTimeString);
-            LocalDateTime endTime = LocalDateTime.parse(endTimeString);
-            if (barTable != null) {
-                int userModelId = (int) session.getAttribute("id");
-                PremiumUser premiumUser = findPremiumUserByUserModel(userModelId);
-                if (premiumUser != null) {
-                    Reservation reservation = new Reservation();
-                    reservation.setUser(premiumUser);
-                    reservation.setStatus(Reservation.StatusType.Pending);
-                    reservation.setBarTable(barTable);
-                    reservation.setStartTime(startTime);
-                    reservation.setEndTime(endTime);
-                    reservationRepository.save(reservation);
-                    return "successfulReservation";
-                } else {
-                    return "redirect:/bar/bars";
-                }
-            } else {
-                return "redirect:reservation/findSeats";
+        }
+        BarTable barTable = barTableRepositoryRepository.getById(tableId);
+        LocalDateTime startTime = LocalDateTime.parse(startTimeString);
+        LocalDateTime endTime = LocalDateTime.parse(endTimeString);
+        if (barTable != null) {
+            int userModelId = (int) session.getAttribute("id");
+            PremiumUser premiumUser = userService.findPremiumUserByUserModel(userModelId);
+            if (premiumUser != null) {
+                Reservation reservation = new Reservation();
+                reservation.setUser(premiumUser);
+                reservation.setStatus(Reservation.StatusType.Pending);
+                reservation.setBarTable(barTable);
+                reservation.setStartTime(startTime);
+                reservation.setEndTime(endTime);
+                reservationService.saveReservation(reservation);
+                return "successfulReservation";
             }
+            return "redirect:/bar/bars";
         }
-    }
+        return "redirect:reservation/findSeats";
 
-    private List<Reservation> getReservationsOfTableByDate(BarTable bt, int year, int month,int day) {
-        return bt.getReservations().stream().filter(reservation ->
-                reservation.getStartTime().getYear() == year &&
-                        reservation.getStartTime().getMonth().getValue() == month &&
-                        reservation.getStartTime().getDayOfMonth() == day).collect(Collectors.toList());
-    }
 
-    private int getYearFromDate(String date) {return Integer.parseInt(date.substring(0, 4));}
-
-    private int getMonthFromDate(String date) {return Integer.parseInt(date.substring(5, 7));}
-
-    private int getDayFromDate(String date) {return Integer.parseInt(date.substring(8, 10));}
-
-    private List<BarTable> getAvailableSeats(List<Reservation> availableReservations) {
-        List<BarTable> availableSeats = new ArrayList<>();
-        for(Reservation reservation: availableReservations){
-            BarTable bt = reservation.getBarTable();
-            if(!availableSeats.contains(bt)){
-                availableSeats.add(bt);
-            }
-        }
-        return availableSeats;
-    }
-
-    private List<Reservation> findAllAvailableReservations(String date, Bar bar) {
-        int year = getYearFromDate(date);
-        int month = getMonthFromDate(date);
-        int day = getDayFromDate(date);
-
-        List<BarTable> barTables = bar.getBarTables();
-        List<Reservation> currentReservations = new ArrayList<>();
-        for(BarTable bt: barTables){
-            currentReservations.addAll(getReservationsOfTableByDate(bt, year, month, day));
-        }
-
-        List<Reservation> availableReservations = new ArrayList<>();
-        for (BarTable bt : barTables) {
-            int currentReservationStartHour = bar.getStartHour();
-            int barEndTime = bar.getEndHour();
-            while (currentReservationStartHour <= barEndTime - Reservation.reservationTime) {
-                LocalDateTime givenHourTime = getHourTime(year, month, day, currentReservationStartHour);
-                LocalDateTime endHourTime = givenHourTime.plusHours(Reservation.reservationTime);
-                if (!reservationForGivenHourExists(bt, currentReservations, givenHourTime, endHourTime)) {
-                    Reservation reservation = new Reservation();
-                    reservation.setBarTable(bt);
-                    reservation.setStartTime(givenHourTime);
-                    reservation.setEndTime(givenHourTime.plusHours(Reservation.reservationTime));
-
-                    availableReservations.add(reservation);
-                }
-                currentReservationStartHour += 1;
-            }
-        }
-        return availableReservations;
-    }
-
-    private List<Reservation> findAvailableReservationPerSeat(int seatId, List<Reservation> currentReservations){
-        List<Reservation> availableReservations = new ArrayList<>();
-        for(Reservation res: currentReservations){
-            if(res.getBarTable().getId() == seatId){
-                availableReservations.add(res);
-            }
-        }
-        return availableReservations;
-    }
-
-    private PremiumUser findPremiumUserByUserModel(int userModelId) {
-        return premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
-    }
-
-    private boolean reservationForGivenHourExists(BarTable bt, List<Reservation> currentReservations, LocalDateTime givenHourTime, LocalDateTime endHourTime) {
-        for (Reservation reservation : currentReservations) {
-            if (reservation.getBarTable().getId() == bt.getId()) {
-                int startHour = givenHourTime.toLocalTime().getHour();
-                int endHour = endHourTime.toLocalTime().getHour();
-                int reservationStartHour = reservation.getStartTime().toLocalTime().getHour();
-                int reservationEndHour = reservation.getEndTime().toLocalTime().getHour();
-                if (endHour == 0)
-                    endHour = 24;
-                if (reservationEndHour == 0)
-                    reservationEndHour = 24;
-                if ((startHour >= reservationStartHour && startHour < reservationEndHour) ||
-                        (reservationStartHour >= startHour && reservationStartHour < endHour)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private LocalDateTime getHourTime(int year, int month, int day, int startTime) {
-        LocalDate ld = LocalDate.of(year, month, day);
-        LocalTime lt = LocalTime.of(startTime, 0);
-        return LocalDateTime.of(ld, lt);
     }
 }

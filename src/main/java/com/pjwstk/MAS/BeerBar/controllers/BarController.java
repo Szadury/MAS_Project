@@ -5,7 +5,7 @@ import com.pjwstk.MAS.BeerBar.models.BarTable;
 import com.pjwstk.MAS.BeerBar.models.PremiumUser;
 import com.pjwstk.MAS.BeerBar.repositories.BarRepository;
 import com.pjwstk.MAS.BeerBar.repositories.BarTableRepository;
-import com.pjwstk.MAS.BeerBar.repositories.PremiumUserRepository;
+import com.pjwstk.MAS.BeerBar.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +21,7 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/bar")
 public class BarController {
+
     @Autowired
     BarRepository barRepository;
 
@@ -28,7 +29,7 @@ public class BarController {
     BarTableRepository barTableRepository;
 
     @Autowired
-    PremiumUserRepository premiumUserRepository;
+    UserService userService;
 
     @GetMapping("/bars")
     public String getBars(Model model, HttpSession session) {
@@ -36,10 +37,10 @@ public class BarController {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        } else {
-            model.addAttribute("bars", barList);
-            return "barList";
         }
+        model.addAttribute("bars", barList);
+        return "barList";
+
     }
 
     @GetMapping("")
@@ -47,19 +48,22 @@ public class BarController {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        } else {
-            Bar bar = barRepository.getBarById(id);
+        }
+        Bar bar = barRepository.getBarById(id);
+        if (bar != null) {
             int userModelId = (int) session.getAttribute("id");
-            PremiumUser premiumUser = findPremiumUserByUserModel(userModelId);
+            PremiumUser premiumUser = userService.findPremiumUserByUserModel(userModelId);
+            model.addAttribute("bar", bar);
             if (premiumUser != null) {
                 model.addAttribute("isPremium", "true");
             }
-            model.addAttribute("bar", bar);
             if (noSeats != null) {
                 model.addAttribute("noSeats", "true");
             }
             return "barPage";
         }
+        return "redirect:/bar/bars";
+
     }
 
     @GetMapping("hasSeats")
@@ -67,27 +71,24 @@ public class BarController {
         if (session.getAttribute("id") == null) {
             model.addAttribute("loginFirst", "not logged in");
             return "login";
-        } else {
-            Bar bar = barRepository.getBarById(barId);
+        }
+        Bar bar = barRepository.getBarById(barId);
+        if (bar != null) {
             List<BarTable> barTableList = bar.getBarTables();
             if (!barTableList.isEmpty()) {
                 model.addAttribute("now", LocalDate.now());
                 model.addAttribute("hasSeats", !barTableList.isEmpty());
                 model.addAttribute("barId", barId);
+                model.addAttribute("barName", bar.getName());
                 if (noReservations != null) {
                     model.addAttribute("noReservations", "True");
                 }
-                model.addAttribute("barName", bar.getName());
                 return "reservationPage";
-            } else {
-                redirectAttributes.addAttribute("noSeats", "true");
-                redirectAttributes.addAttribute("id", barId);
-                return "redirect:/bar";
             }
+            redirectAttributes.addAttribute("noSeats", "true");
+            redirectAttributes.addAttribute("id", barId);
+            return "redirect:/bar";
         }
-    }
-
-    private PremiumUser findPremiumUserByUserModel(int userModelId) {
-        return premiumUserRepository.findPremiumUserIdWithUserModelId(userModelId);
+        return "redirect:/bar/bars";
     }
 }

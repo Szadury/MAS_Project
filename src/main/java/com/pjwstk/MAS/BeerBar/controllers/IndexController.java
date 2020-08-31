@@ -1,9 +1,7 @@
 package com.pjwstk.MAS.BeerBar.controllers;
 
 import com.pjwstk.MAS.BeerBar.models.UserModel;
-import com.pjwstk.MAS.BeerBar.repositories.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pjwstk.MAS.BeerBar.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +14,7 @@ import java.util.Iterator;
 public class IndexController {
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @GetMapping("/")
     public String getLoginPage() {
@@ -25,16 +23,15 @@ public class IndexController {
 
     @PostMapping("/login")
     public String authLogin(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model) {
-        Iterator<UserModel> userIterable = userRepository.findUserWithPassword(username, password).iterator();
+        Iterator<UserModel> userIterable = userService.findUserWithPassword(username, password).iterator();
         if (userIterable.hasNext()) {
             UserModel userModel = userIterable.next();
             session.setAttribute("username", username);
             session.setAttribute("id", userModel.getId());
             return "redirect:bar/bars";
-        } else {
-            model.addAttribute("loginError", "User not found");
-            return "login";
         }
+        model.addAttribute("loginError", "User not found");
+        return "login";
     }
 
     @RequestMapping(value = "logout", method = RequestMethod.GET)
