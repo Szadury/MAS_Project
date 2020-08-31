@@ -13,6 +13,6 @@ public interface BarRepository extends JpaRepository<Bar, Long> {
     @Override
     List<Bar> findAll();
 
-    @Query("SELECT b FROM Bar b inner join fetch b.barTables WHERE b.id = :id")
+    @Query("SELECT b FROM Bar b left join fetch b.barTables WHERE b.id = :id")
     Bar getBarById(@Param("id") int id);
 }
